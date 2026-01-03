@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   Info,
   Trophy,
-  ArrowRight
+  ArrowRight,
+  RotateCcw
 } from 'lucide-react';
 
 // --- Types & Data ---
@@ -30,6 +31,8 @@ interface Question {
   minLabel?: string;
   maxLabel?: string;
 }
+
+const CHECKOUT_URL = 'https://payment.ticto.app/O4D5822B0';
 
 const QUESTIONS: Question[] = [
   {
@@ -155,7 +158,7 @@ const PROFILES = [
     description: 'Seu sistema de suporte (core) está sobrecarregado. A pressão está "vencendo" a musculatura.',
     errors: ['Abdominais intensos agora', 'Prender o ar em esforços', 'Ignorar escapes de xixi'],
     actions: ['Sopre o ar ao pegar o bebê', 'Levante da cama sempre de lado', 'Busque um especialista'],
-    cta: 'Capítulo 1: O despertar da Conexão',
+    cta: 'Desbloquear Guia de Recuperação',
     badge: { name: 'Badge Proteção', icon: <Shield className="w-6 h-6" /> }
   },
   {
@@ -166,7 +169,7 @@ const PROFILES = [
     description: 'Você já tem percepção, mas a "engrenagem" ainda falha sob fadiga. A lombar está compensando.',
     errors: ['Má postura ao amamentar', 'Carregar peso de um lado só', 'Falta de hidratação'],
     actions: ['Apoie as costas ao amamentar', 'Respire consciente 2min 3x/dia', 'Evite impacto agora'],
-    cta: 'Capítulo 3: Alinhamento e Postura',
+    cta: 'Garantir meu Core Consciente',
     badge: { name: 'Badge Core Consciente', icon: <Gem className="w-6 h-6" /> }
   },
   {
@@ -177,7 +180,7 @@ const PROFILES = [
     description: 'Você está no caminho certo! Já tem força, mas pequenos hábitos impedem o resultado final.',
     errors: ['Ficar sentada sem apoio', 'Não ativar core em treinos gerais', 'Intestino preguiçoso'],
     actions: ['Use banquinho nos pés no banheiro', 'Inclua mobilidade de coluna', 'Aumente as fibras'],
-    cta: 'Capítulo 5: Dominando a Pressão',
+    cta: 'Alcançar Postura de Rainha',
     badge: { name: 'Badge Postura de Rainha', icon: <Crown className="w-6 h-6" /> }
   },
   {
@@ -188,7 +191,7 @@ const PROFILES = [
     description: 'Excelente! Consciência corporal acima da média. O foco agora é a progressão segura.',
     errors: ['Apressar volta a cargas máximas', 'Pular o aquecimento específico', 'Ignorar pequenos sinais'],
     actions: ['Teste pranchas curtas de 10s', 'Mantenha o ritual de aquecimento', 'Compartilhe sua evolução'],
-    cta: 'Capítulo 8: A Retomada do Treino',
+    cta: 'Módulo de Retomada Avançada',
     badge: { name: 'Badge Respira e Vai', icon: <Flame className="w-6 h-6" /> }
   }
 ];
@@ -232,7 +235,6 @@ const QuizApp = () => {
     if (currentQuestionIdx < QUESTIONS.length - 1) {
       setCurrentQuestionIdx(currentQuestionIdx + 1);
     } else {
-      // Fix: Added explicit types to prevent '+' being applied to 'unknown' error
       const finalXP = Object.values(newAnswers).reduce((a: number, b: number) => a + b, 0);
       setTotalXP(finalXP);
       setStep('result');
@@ -282,13 +284,12 @@ const QuizApp = () => {
                 onChange={(e) => {
                   const val = parseInt(e.target.value);
                   let xp = 0;
-                  // Specific logic for Q2 and Q9
                   if (q.id === 2) {
                     if (val <= 3) xp = 0;
                     else if (val <= 6) xp = 1;
                     else if (val <= 8) xp = 2;
                     else xp = 3;
-                  } else { // Q9 (inverse scale)
+                  } else { 
                     if (val >= 7) xp = 0;
                     else if (val >= 4) xp = 1;
                     else if (val >= 1) xp = 2;
@@ -394,9 +395,9 @@ const QuizApp = () => {
             <div className="inline-block p-4 bg-white rounded-full card-shadow mb-4">
               {getProfile(totalXP).icon}
             </div>
-            <h2 className="text-sm uppercase font-bold text-primary tracking-widest mb-1">Resultado Alcançado</h2>
-            <h1 className="text-2xl font-bold text-charcoal">{getProfile(totalXP).name}</h1>
-            <div className="mt-2 text-coral font-bold text-xl">{totalXP} XP</div>
+            <h2 className="text-sm uppercase font-bold text-primary tracking-widest mb-1 text-center">Resultado Alcançado</h2>
+            <h1 className="text-2xl font-bold text-charcoal text-center">{getProfile(totalXP).name}</h1>
+            <div className="mt-2 text-coral font-bold text-xl text-center">{totalXP} XP</div>
           </div>
 
           <div className="space-y-6">
@@ -444,13 +445,21 @@ const QuizApp = () => {
               </div>
             </div>
 
-            <div className="py-6">
-              <h3 className="font-bold text-center mb-4 italic opacity-70">"Sem culpa, com estratégia."</h3>
+            <div className="py-6 space-y-4">
+              <h3 className="font-bold text-center mb-2 italic opacity-70">"Complete seu domínio e recupere seu corpo."</h3>
+              
+              <button 
+                onClick={() => window.location.href = CHECKOUT_URL}
+                className="w-full bg-primary text-white py-5 rounded-3xl font-bold flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-xl text-lg animate-bounce"
+              >
+                {getProfile(totalXP).cta} <ArrowRight className="w-6 h-6" />
+              </button>
+
               <button 
                 onClick={() => window.location.reload()}
-                className="w-full bg-primary text-white py-5 rounded-3xl font-bold flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-lg"
+                className="w-full bg-transparent text-charcoal/50 py-3 rounded-2xl font-semibold flex items-center justify-center gap-2 hover:bg-white/30 transition-all text-xs"
               >
-                {getProfile(totalXP).cta} <ArrowRight className="w-5 h-5" />
+                <RotateCcw className="w-4 h-4" /> Refazer Quiz
               </button>
             </div>
           </div>
